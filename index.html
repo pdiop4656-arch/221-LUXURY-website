@@ -428,7 +428,14 @@ p.lede{ font-family:var(--font-sans); font-weight:300; color:var(--text-dim); fo
 /* =========================================================
    Product cards
    ========================================================= */
-.product-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:4.5rem 3rem; }
+.product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3rem 2.2rem;align-items:start}
+.product-card{min-width:0;width:100%}
+.product-media{aspect-ratio:1/1;min-height:0}
+.product-media img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.product-info{min-width:0}
+.product-info .product-name{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+@media(max-width:1080px){.product-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.6rem 1.5rem}}
+@media(max-width:640px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem .8rem}.product-media{aspect-ratio:1/1}.product-info .product-name{font-size:.82rem;line-height:1.3;min-height:2.6em}}
 .product-card{
   position:relative; display:flex; flex-direction:column;
   background:transparent; transition:transform .6s var(--ease);
@@ -2583,7 +2590,7 @@ function productCardHtml(p, revealClass = ''){
     <div class="product-media">
       <a href="#/product?id=${p.id}" class="media-link" aria-label="${p.name}"></a>
       ${badge}
-      <img src="${p.img}" alt="${p.name}" loading="lazy">
+      <img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">
       <div class="product-quickadd">
         <button onclick="quickAdd('${p.id}')">Ajouter au panier</button>
       </div>
@@ -2714,11 +2721,11 @@ function applyShopFilters(){
   let list = PRODUCTS.slice();
 
   if(shopState.q) list = list.filter(p => p.name.toLowerCase().includes(shopState.q.toLowerCase()));
-  if(shopState.cats.length) list = list.filter(p => shopState.cats.includes(p.category));
+  if(shopState.cats.length) list = list.filter(p => shopState.cats.some(c => c === p.category || (Array.isArray(p.categories) && p.categories.includes(c))));
   if(shopState.min != null && !isNaN(shopState.min)) list = list.filter(p => p.price >= shopState.min);
   if(shopState.max != null && !isNaN(shopState.max)) list = list.filter(p => p.price <= shopState.max);
   if(shopState.promo) list = list.filter(p => p.oldPrice);
-  if(shopState.isNew) list = list.filter(p => p.badge === 'Nouveau');
+  if(shopState.isNew) list = list.filter(p => p && (p.isNew === true || p.isNew === 'true' || p.badge === 'Nouveau' || p.badge === 'Nouveauté' || p.badge === 'Nouveaute'));
 
   switch(shopState.sort){
     case 'price-asc': list.sort((a,b) => a.price - b.price); break;
@@ -4099,6 +4106,13 @@ window.addEventListener('hashchange', renderRoute);
 #accountModal221 .account-switch{margin-top:17px;text-align:center;font-size:12px;color:#aaa}
 #accountModal221 .account-switch button{background:none;border:0;color:#c9a96e;cursor:pointer;font-weight:700}
 #accountModal221 .account-msg{min-height:18px;margin-top:10px;font-size:12px}
+.account-social-divider{display:flex;align-items:center;gap:10px;margin:18px 0 12px;color:#777;font-size:11px}
+.account-social-divider:before,.account-social-divider:after{content:"";height:1px;background:#333;flex:1}
+.account-socials{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.account-social{border:1px solid #333;background:#181818;color:#fff;border-radius:8px;padding:11px;cursor:pointer;font-weight:600}
+.account-social b{display:inline-flex;width:20px;height:20px;align-items:center;justify-content:center;margin-right:6px;border-radius:4px}
+.account-social.google b{background:#fff;color:#4285f4}
+.account-social.facebook b{background:#1877f2;color:#fff}
 #accountModal221 .account-user-card{padding:18px;border:1px solid #333;border-radius:10px;background:#181818}
 #accountModal221 .account-user-name{font-size:18px;font-weight:800;margin-bottom:4px}
 #accountModal221 .account-user-email{font-size:12px;color:#aaa}
@@ -4124,7 +4138,18 @@ window.addEventListener('hashchange', renderRoute);
   function render(){
     const m=modal(); if(!m)return; const a=readAccount();
     if(a){const prof=readJSON('221luxury_customer_profile')||a;m.querySelector('.account-content').innerHTML=`<div class="account-user-card"><div class="account-user-name">Bonjour ${escA(prof.name||a.name)}</div><div class="account-user-email">${escA(prof.email||a.email)}</div><div style="font-size:12px;color:#aaa;margin-top:8px">${escA(prof.phone||'')}${prof.address?' · '+escA(prof.address):''}${prof.city?' · '+escA(prof.city):''}</div></div><div style="display:grid;gap:9px;margin-top:14px"><button type="button" data-account-action="orders" style="width:100%;text-align:left;border:1px solid #333;background:#181818;color:#fff;border-radius:9px;padding:13px;cursor:pointer">📦 Mes commandes</button></div><button class="account-logout" type="button" data-account-action="logout">Se déconnecter</button></div>`;return}
-    m.querySelector('.account-content').innerHTML=`<form id="accountLoginForm"><div class="account-field"><label>Email</label><input name="email" type="email" required autocomplete="email" placeholder="votre@email.com"></div><div class="account-field"><label>Mot de passe</label><input name="password" type="password" required autocomplete="current-password" placeholder="••••••••"></div><div class="account-actions"><button class="account-primary" type="submit">Se connecter</button><button class="account-secondary" type="button" data-account-action="signup">Créer un compte</button></div><div class="account-msg" id="accountMsg"></div></form>`;
+    m.querySelector('.account-content').innerHTML=`<form id="accountLoginForm">
+      <div class="account-field"><label>Email</label><input name="email" type="email" required autocomplete="email" placeholder="votre@email.com"></div>
+      <div class="account-field"><label>Mot de passe</label><input name="password" type="password" required autocomplete="current-password" placeholder="••••••••"></div>
+      <div style="text-align:right;margin:-4px 0 12px"><button type="button" data-account-action="forgot" style="background:none;border:0;color:#c9a96e;cursor:pointer;font-size:12px">Mot de passe oublié ?</button></div>
+      <div class="account-actions"><button class="account-primary" type="submit">Se connecter</button><button class="account-secondary" type="button" data-account-action="signup">Créer un compte</button></div>
+      <div class="account-social-divider"><span>ou continuer avec</span></div>
+      <div class="account-socials">
+        <button type="button" class="account-social google" data-account-action="google"><b>G</b> Google</button>
+        <button type="button" class="account-social facebook" data-account-action="facebook"><b>f</b> Facebook</button>
+      </div>
+      <div class="account-msg" id="accountMsg"></div>
+    </form>`;
     const form=m.querySelector('#accountLoginForm'); form.addEventListener('submit',login);m.querySelector('[data-account-action="signup"]').addEventListener('click',showSignup);
   }
   function showSignup(){
@@ -4141,6 +4166,33 @@ window.addEventListener('hashchange', renderRoute);
     if(!writeAccount({name,email})){msg.textContent='Compte créé, mais la session ne peut pas être conservée par ce navigateur.';msg.style.color='#e58b8b';return;}
     updateButtons();render();
   }
+  function showForgot(){
+    const m=modal();
+    m.querySelector('.account-content').innerHTML=`<form id="accountForgotForm">
+      <div class="account-field"><label>Email du compte</label><input name="email" type="email" required autocomplete="email" placeholder="votre@email.com"></div>
+      <div class="account-actions"><button class="account-primary" type="submit">Réinitialiser</button><button class="account-secondary" type="button" data-account-action="back">Retour</button></div>
+      <div class="account-msg" id="accountMsg"></div>
+    </form>`;
+    m.querySelector('#accountForgotForm').addEventListener('submit',forgotPassword);
+    m.querySelector('[data-account-action="back"]').addEventListener('click',render);
+  }
+  function forgotPassword(e){
+    e.preventDefault();
+    const f=new FormData(e.target), email=String(f.get('email')||'').trim().toLowerCase(), msg=document.getElementById('accountMsg');
+    let saved=null; try{saved=JSON.parse(storageGet(REGISTERED)||'null')}catch(x){}
+    if(!saved || saved.email!==email){msg.textContent='Aucun compte trouvé avec cet email.';msg.style.color='#e58b8b';return}
+    msg.textContent='Compte trouvé. Sur cette version statique, la réinitialisation sécurisée par email nécessite un serveur. Utilisez votre ancien mot de passe ou connectez un service d’authentification.';
+    msg.style.color='#c9a96e';
+  }
+  function showSocialNotice(provider){
+    const m=modal();
+    m.querySelector('.account-content').innerHTML=`<div style="text-align:center;padding:10px 0 4px">
+      <div style="font-size:34px;margin-bottom:12px">${provider==='Google'?'G':'f'}</div>
+      <h3 style="margin:0 0 8px">Connexion ${provider}</h3>
+      <p style="color:#aaa;font-size:12px;line-height:1.6">La connexion ${provider} nécessite une configuration OAuth sécurisée avec les identifiants de votre application. Le bouton est prêt dans l’interface, mais aucun compte externe n’est connecté automatiquement sur cette version HTML seule.</p>
+      <button class="account-secondary" type="button" data-account-action="back" style="width:100%;margin-top:14px">Retour</button>
+    </div>`;
+  }
   function logout(){
     storageRemove(KEY);
     updateButtons();
@@ -4156,6 +4208,9 @@ window.addEventListener('hashchange', renderRoute);
       const action=e.target.closest('[data-account-action]')?.getAttribute('data-account-action');
       if(action==='logout'){e.preventDefault();logout();}
       if(action==='orders'){e.preventDefault();showOrders();}
+      if(action==='forgot'){e.preventDefault();showForgot();}
+      if(action==='google'){e.preventDefault();showSocialNotice('Google');}
+      if(action==='facebook'){e.preventDefault();showSocialNotice('Facebook');}
       if(action==='back'){e.preventDefault();render();}
     });
     document.querySelectorAll('.nav-right a[aria-label="Mon compte"], .mobile-nav a[aria-label="Compte"]').forEach(a=>{a.classList.add('account-btn');a.setAttribute('data-account-open','true');a.addEventListener('click',e=>{e.preventDefault();openModal()})});
