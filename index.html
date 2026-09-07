@@ -474,6 +474,7 @@ p.lede{ font-family:var(--font-sans); font-weight:300; color:var(--text-dim); fo
 .product-name a:hover{ color:var(--gold-3); }
 .product-price{ margin-top:.6rem; display:flex; align-items:center; gap:.6rem; }
 .product-price .now{ font-family:var(--font-display); font-size:1.1rem; color:#1a1712; font-weight:500; }
+.product-name, .product-name a, .product-price .now{ font-family:"Arial Black", Arial, sans-serif !important; font-weight:900; }
 .product-price .was{ font-size:.8rem; color:#756e5f; text-decoration:line-through; }
 .swatch-dots{ display:flex; gap:.35rem; margin-left:auto; }
 .swatch-dot{ width:14px; height:14px; border-radius:50%; border:1px solid rgba(20,18,14,.15); display:inline-block; }
@@ -865,8 +866,14 @@ p.lede{ font-family:var(--font-sans); font-weight:300; color:var(--text-dim); fo
   .product-carousel-viewport{ gap:2.2rem; }
 }
 @media (max-width:640px){
-  .product-carousel-viewport .product-card{ flex-basis:calc((100% - 1.2rem)/2); }
-  .product-carousel-viewport{ gap:1.2rem; }
+  /* Enlarge the featured product cards without changing the rest of the design. */
+  .product-carousel{ position:relative; }
+  .product-carousel-viewport{ width:100%; gap:.8rem; }
+  .product-carousel-viewport .product-card{ flex:0 0 calc((100% - .8rem)/2); }
+  .product-carousel .carousel-btn{ position:absolute; z-index:5; top:50%; transform:translateY(-50%); }
+  .product-carousel .carousel-prev{ left:.15rem; }
+  .product-carousel .carousel-next{ right:.15rem; }
+  .product-carousel-viewport .product-media{ width:100%; aspect-ratio:1/1; }
 }
 
 /* =========================================================
