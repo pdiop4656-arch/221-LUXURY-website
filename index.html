@@ -973,6 +973,22 @@ try {
 }
 </script>
 
+<style id="221luxury-locale-main-style">
+.locale-switcher{position:relative;display:flex;align-items:center;z-index:900}
+.locale-trigger{display:inline-flex;align-items:center;justify-content:center;gap:4px;width:44px;height:40px;padding:0 7px;border:1px solid var(--line-on-dark);border-radius:999px;background:rgba(255,255,255,.03);color:var(--text-on-dark);font:inherit;cursor:pointer;transition:.25s ease}
+.locale-trigger:hover,.locale-switcher.is-open .locale-trigger{border-color:var(--gold-2);background:rgba(233,210,156,.08)}
+#localeFlag{font-size:21px;line-height:1}.locale-chevron{font-size:11px;color:var(--gold-1);line-height:1}
+.locale-panel{position:absolute;right:0;top:calc(100% + 9px);width:255px;padding:9px;background:var(--ink-2);border:1px solid var(--line-on-dark);border-radius:14px;box-shadow:0 22px 46px -18px rgba(0,0,0,.75);opacity:0;transform:translateY(7px);pointer-events:none;transition:.22s ease}
+.locale-switcher.is-open .locale-panel{opacity:1;transform:translateY(0);pointer-events:auto}
+.locale-title{font-size:9px;letter-spacing:.16em;color:var(--gold-1);padding:7px 8px 9px}
+.locale-option{width:100%;display:flex;align-items:center;gap:11px;padding:10px 9px;border:0;border-radius:10px;background:transparent;color:var(--text-on-dark);font:inherit;text-align:left;cursor:pointer;transition:.18s ease}
+.locale-option:hover,.locale-option.is-active{background:rgba(233,210,156,.09)}.locale-option-flag{font-size:23px;line-height:1;width:30px;text-align:center}.locale-option span:last-child{display:flex;flex-direction:column;gap:2px}.locale-option strong{font-size:12px;font-weight:600}.locale-option small{font-size:10px;color:var(--text-on-dark-dim)}
+.goog-te-banner-frame,.goog-te-balloon-frame,.skiptranslate iframe{display:none!important}body{top:0!important}.goog-tooltip,.goog-tooltip:hover{display:none!important}.goog-text-highlight{background:transparent!important;box-shadow:none!important}
+@media(max-width:640px){.locale-trigger{width:40px;height:36px}.locale-panel{right:-4px;width:245px}}
+</style>
+<div id="google_translate_element" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden"></div>
+<script>window.googleTranslateElementInit=function(){try{new google.translate.TranslateElement({pageLanguage:'fr',includedLanguages:'en,fr',autoDisplay:false,multilanguagePage:true},'google_translate_element')}catch(e){console.warn('Google Translate init failed',e)}window.__221GoogleTranslateReady=true;if(window.__221ApplyGoogleLanguage)window.__221ApplyGoogleLanguage()};</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
 <body>
 
@@ -1005,7 +1021,7 @@ try {
         <svg class="gold-stroke reveal reveal-delay-2" viewBox="0 0 220 10"><path d="M4 5 Q60 -2 110 5 T216 5"/></svg>
         <p class="lede reveal reveal-delay-3">Chaînes, pendentifs et bijoux sertis choisis pièce par pièce. Une exigence née à Dakar, pensée pour ceux qui reconnaissent la qualité au premier regard.</p>
         <div class="hero-cta reveal reveal-delay-4">
-          <a href="#/shop?cat=Chaînes" class="btn btn-solid">Découvrir les chaînes</a>
+          <a href="#/shop" class="btn btn-solid">Acheter maintenant</a>
           <a href="#/shop?new=1" class="btn btn-solid">Nouveautés</a>
         </div>
       </div>
@@ -2278,6 +2294,19 @@ function renderHeader(){
       <div class="nav-right">
         <button class="btn-icon" id="openSearch" aria-label="Rechercher">${icon('search')}</button>
         <a href="#" class="btn-icon account-btn hide-mobile" aria-label="Mon compte" data-account-open="true">${icon('user')}<span class="account-avatar-dot" aria-hidden="true"></span></a>
+        <div class="locale-switcher" id="localeSwitcher">
+          <button type="button" class="locale-trigger" id="localeTrigger" aria-expanded="false" aria-haspopup="true" aria-label="Choisir le pays, la langue et la devise">
+            <span id="localeFlag" aria-hidden="true">🇸🇳</span><span class="locale-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div class="locale-panel" id="localePanel" role="menu">
+            <div class="locale-title" id="localeTitle">PAYS / LANGUE / DEVISE</div>
+            <button type="button" class="locale-option" data-locale-country="SN" role="menuitem"><span class="locale-option-flag">🇸🇳</span><span><strong>Sénégal</strong><small>Français · FCFA</small></span></button>
+            <button type="button" class="locale-option" data-locale-country="GM" role="menuitem"><span class="locale-option-flag">🇬🇲</span><span><strong>Gambia</strong><small>English · GMD</small></span></button>
+            <button type="button" class="locale-option" data-locale-country="FR" role="menuitem"><span class="locale-option-flag">🇫🇷</span><span><strong>France</strong><small>Français · EUR</small></span></button>
+            <button type="button" class="locale-option" data-locale-country="US" role="menuitem"><span class="locale-option-flag">🇺🇸</span><span><strong>United States</strong><small>English · USD</small></span></button>
+          </div>
+        </div>
+
         <button class="btn-icon icon-wrap" id="openCart" aria-label="Panier">
           ${icon('bag')}
           <span class="cart-count" data-cart-count>0</span>
@@ -3456,7 +3485,24 @@ function buildOrderEmailHtml(data){
   return `
 <!DOCTYPE html>
 <html lang="fr">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style id="221luxury-locale-style">
+/* 221 LUXURY — Language & Currency switcher */
+.locale-switcher{position:relative;display:flex;align-items:center;z-index:900}
+.locale-trigger{display:inline-flex;align-items:center;gap:.38rem;height:2.6rem;padding:0 .7rem;border:1px solid var(--line-on-dark);border-radius:999px;background:rgba(255,255,255,.02);color:var(--text-on-dark);font:inherit;font-size:.68rem;letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:.25s ease}
+.locale-trigger:hover,.locale-switcher.is-open .locale-trigger{border-color:var(--gold-2);background:rgba(233,210,156,.08)}
+.locale-chevron{font-size:.8rem;color:var(--gold-1);line-height:1}
+.locale-panel{position:absolute;right:0;top:calc(100% + .65rem);width:245px;padding:.85rem;background:var(--ink-2);border:1px solid var(--line-on-dark);border-radius:14px;box-shadow:0 22px 46px -18px rgba(0,0,0,.75);opacity:0;transform:translateY(7px);pointer-events:none;transition:.25s ease}
+.locale-switcher.is-open .locale-panel{opacity:1;transform:translateY(0);pointer-events:auto}
+.locale-title{font-size:.62rem;letter-spacing:.16em;color:var(--gold-1);margin-bottom:.7rem}
+.locale-row{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.locale-row button{border:1px solid rgba(233,210,156,.14);border-radius:9px;padding:.62rem .55rem;background:rgba(255,255,255,.025);color:var(--text-on-dark);font:inherit;font-size:.72rem;cursor:pointer;text-align:left;transition:.2s ease}
+.locale-row button:hover,.locale-row button.is-active{border-color:var(--gold-2);background:rgba(233,210,156,.08);color:#fff}
+.locale-divider{height:1px;background:rgba(233,210,156,.12);margin:.75rem 0}
+@media(max-width:900px){.locale-trigger{height:2.35rem;padding:0 .55rem;font-size:.62rem}.locale-panel{right:-5px}}
+@media(max-width:640px){.locale-trigger{padding:0 .5rem}}
+
+</style>
+</head>
 <body style="margin:0;padding:0;background:#f2ede6;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
        style="background:#f2ede6;">
@@ -4411,6 +4457,47 @@ window.addEventListener('hashchange', renderRoute);
 </script>
 <!-- 221LUXURY-ACCOUNT-END -->
 
+<script id="221luxury-locale-system">
+(function(){
+'use strict';
+const KEY='221luxury_country_locale_v3',RATE_KEY='221luxury_currency_rates_v3';
+const CONFIG={SN:{flag:'🇸🇳',lang:'fr',currency:'XOF',name:'Sénégal',currencyLabel:'FCFA',locale:'fr-SN'},GM:{flag:'🇬🇲',lang:'en',currency:'GMD',name:'Gambia',currencyLabel:'GMD',locale:'en-GM'},FR:{flag:'🇫🇷',lang:'fr',currency:'EUR',name:'France',currencyLabel:'EUR',locale:'fr-FR'},US:{flag:'🇺🇸',lang:'en',currency:'USD',name:'United States',currencyLabel:'USD',locale:'en-US'}};
+const state={country:'SN',manual:false,rates:{EUR:0.00152,USD:0.00169,GMD:0.1315}};let translationTimer=0;
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&CONFIG[x.country]){state.country=x.country;state.manual=!!x.manual}const r=JSON.parse(localStorage.getItem(RATE_KEY)||'null');if(r&&typeof r==='object')state.rates=Object.assign(state.rates,r)}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({country:state.country,manual:state.manual}))}catch(e){}}
+function current(){return CONFIG[state.country]||CONFIG.SN}
+function fallbackCountry(){const tz=(Intl.DateTimeFormat().resolvedOptions().timeZone||'').toLowerCase(),lang=(navigator.language||'').toLowerCase();if(tz.includes('dakar')||lang.includes('-sn'))return'SN';if(tz.includes('banjul')||lang.includes('-gm'))return'GM';if(tz.includes('paris')||lang.includes('-fr'))return'FR';if(tz.includes('new_york')||tz.includes('los_angeles')||tz.includes('chicago')||tz.includes('denver')||lang.includes('-us'))return'US';return lang.startsWith('fr')?'FR':'US'}
+async function detectCountry(){try{const c=new AbortController(),t=setTimeout(()=>c.abort(),2500);const r=await fetch('https://ipapi.co/json/',{signal:c.signal,cache:'no-store'});clearTimeout(t);if(r.ok){const d=await r.json();if(d&&CONFIG[d.country_code])return d.country_code}}catch(e){}return fallbackCountry()}
+async function loadRates(){try{const c=new AbortController(),t=setTimeout(()=>c.abort(),3000);const r=await fetch('https://open.er-api.com/v6/latest/XOF',{signal:c.signal,cache:'no-store'});clearTimeout(t);if(r.ok){const d=await r.json(),rr=d&&d.rates;if(rr){['EUR','USD','GMD'].forEach(k=>{const v=Number(rr[k]);if(v>0)state.rates[k]=v});try{localStorage.setItem(RATE_KEY,JSON.stringify(state.rates))}catch(e){}}}}catch(e){}}
+function money(amount){const n=Number(amount)||0,c=current(),v=c.currency==='XOF'?n:n*(Number(state.rates[c.currency])||1);const opts={maximumFractionDigits:c.currency==='XOF'?0:2,minimumFractionDigits:0};const f=new Intl.NumberFormat(c.locale,opts).format(v);if(c.currency==='XOF')return f+' FCFA';if(c.currency==='GMD')return f+' GMD';if(c.currency==='EUR')return f+' €';return '$'+f}
+window.formatXOF=money;window.format221LuxuryMoney=money;
+function updateSelector(){const c=current(),f=document.getElementById('localeFlag'),title=document.getElementById('localeTitle');if(f)f.textContent=c.flag;if(title)title.textContent=c.lang==='fr'?'PAYS / LANGUE / DEVISE':'COUNTRY / LANGUAGE / CURRENCY';document.documentElement.lang=c.lang;document.querySelectorAll('[data-locale-country]').forEach(b=>b.classList.toggle('is-active',b.dataset.localeCountry===state.country));const tr=document.getElementById('localeTrigger');if(tr)tr.setAttribute('aria-label',(c.lang==='fr'?'Pays actuel : ':'Current country: ')+c.name+' — '+c.currencyLabel)}
+function setGoogleCookie(lang){try{const v='/fr/'+lang;document.cookie='googtrans='+v+';path=/';if(location.hostname)document.cookie='googtrans='+v+';path=/;domain='+location.hostname}catch(e){}}
+function clearGoogleCookie(){try{document.cookie='googtrans=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';if(location.hostname)document.cookie='googtrans=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain='+location.hostname}catch(e){}}
+function applyGoogleLanguage(){const lang=current().lang;if(lang==='fr'){clearGoogleCookie();const sel=document.querySelector('.goog-te-combo');if(sel&&sel.value&&sel.value!=='fr'){sel.value='fr';sel.dispatchEvent(new Event('change'))}return}setGoogleCookie('en');const sel=document.querySelector('.goog-te-combo');if(sel&&sel.value!=='en'){sel.value='en';sel.dispatchEvent(new Event('change'))}}
+window.__221ApplyGoogleLanguage=applyGoogleLanguage;
+function updateMeta(){const fr=current().lang==='fr';document.title=fr?'221 LUXURY — Chaînes, Bagues, Bracelets & Lunettes d’Exception':'221 LUXURY — Premium Chains, Rings, Bracelets & Sunglasses';const m=document.querySelector('meta[name="description"]');if(m)m.content=fr?'221 LUXURY — chaînes, bagues, bracelets et lunettes sélectionnés avec exigence. Livraison à Dakar et à l’international.':'221 LUXURY — premium chains, rings, bracelets and sunglasses. Delivery in Dakar and internationally.'}
+function rerenderHomePrices(){
+  try{
+    const homeNouveautes=PRODUCTS.filter(p=>p&&(p.isNew===true||p.badge==='Nouveau'||p.badge==='Nouveauté'||p.badge==='Nouveaute'));
+    const homeNewSection=document.getElementById('home-nouveautes');
+    if(homeNouveautes.length){renderProductGrid('homeNouveautesGrid',homeNouveautes);try{initProductCarousel('homeNouveautesGrid')}catch(e){}}
+    else if(homeNewSection)homeNewSection.style.display='none';
+    renderProductGrid('homeGrid',PRODUCTS);try{initProductCarousel('homeGrid')}catch(e){}
+    renderProductGrid('bestsellersGrid',PRODUCTS);try{initProductCarousel('bestsellersGrid')}catch(e){}
+  }catch(e){console.warn('221 Luxury: impossible de rafraîchir les prix de l’accueil',e)}
+}
+function setCountry(country){if(!CONFIG[country])return;state.country=country;state.manual=true;save();updateSelector();setGoogleCookie(current().lang);try{rerenderHomePrices()}catch(e){}try{if(typeof renderRoute==='function')renderRoute()}catch(e){}try{if(typeof renderCartDrawer==='function')renderCartDrawer()}catch(e){}try{if(typeof updateCartBadges==='function')updateCartBadges()}catch(e){}updateSelector();clearTimeout(translationTimer);translationTimer=setTimeout(()=>{updateMeta();applyGoogleLanguage()},300)}
+function bind(){const sw=document.getElementById('localeSwitcher'),tr=document.getElementById('localeTrigger'),p=document.getElementById('localePanel');if(!sw||!tr||!p)return;const close=()=>{sw.classList.remove('is-open');tr.setAttribute('aria-expanded','false')};tr.addEventListener('click',e=>{e.stopPropagation();const o=!sw.classList.contains('is-open');sw.classList.toggle('is-open',o);tr.setAttribute('aria-expanded',String(o))});p.addEventListener('click',e=>e.stopPropagation());document.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.querySelectorAll('[data-locale-country]').forEach(b=>b.addEventListener('click',()=>{setCountry(b.dataset.localeCountry);close()}));updateSelector()}
+load();
+async function boot(){bind();if(!state.manual){const c=await detectCountry();if(c){state.country=c;save()}}await loadRates();updateSelector();
+// The homepage product grids are rendered by the main entry script before this locale module loads.
+// Re-render them here so their prices use the selected country's currency immediately.
+try{rerenderHomePrices()}catch(e){}
+try{if(typeof renderRoute==='function')renderRoute()}catch(e){}try{if(typeof renderCartDrawer==='function')renderCartDrawer()}catch(e){}updateMeta();setTimeout(applyGoogleLanguage,900);const obs=new MutationObserver(()=>{clearTimeout(translationTimer);translationTimer=setTimeout(()=>{updateSelector();applyGoogleLanguage()},400)});obs.observe(document.body,{childList:true,subtree:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
 </body>
 </html>
 
